@@ -35,6 +35,57 @@ class EncadrantsController extends Controller
     {
         return view('admin.encadrants.create');
     }
+ /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request)
+    {
+        if($request->ajax())
+        {
+            $output="";
+            $encadrants = User::where('type', 'encadrant')
+            ->where(function ($query) use ($request) {
+                    $query->where('name', "like", "%" . $request->search . "%");
+                    $query->orWhere('lname', "like", "%" . $request->search . "%");
+                    $query->orWhere('email', "like", "%" . $request->search . "%");
+                })->get();
+            if($encadrants)
+            {
+                foreach ($encadrants as $key => $encadrant) {
+                $output.='<tr>'.
+                '<td>
+                <a href="#"><i class="fas fa-mouse"></i></a>
+                </td>
+                <td>'.$encadrant->lname.'</td>'.
+                '<td>'.$encadrant->name.'</td>'.
+                '<td>'.$encadrant->email.'</td>
+                <td class="project-actions text-right">
+                <a type="submit" class="btn btn-info btn-sm"
+                    href="'.route('encadrants.edit', $encadrant->id).'">
+                    <i class="fas fa-pencil-alt">
+                    </i>
+                    Modifier
+                </a> <form style="display: contents;" method="post"
+                action='.route('encadrants.destroy', $encadrant->id).'>
+                '.csrf_field() .'
+                '. method_field("delete").'
+                <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="fas fa-trash">
+                    </i>
+                    Supprimer
+                </button>
+            </form>
+
+        </td>
+                </tr>';
+                }
+                return Response($output);
+            }
+        }
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -79,6 +130,7 @@ class EncadrantsController extends Controller
         $user->CIN = $request->input('CIN');
         $user->type = $request->input('type');
         $user->tele = $request->input('tele');
+        $user->valide = "valide";
         $user->save();
         $user1 = User::where('email', $user->email)->get(); 
         $encadrant = new Encadrant();

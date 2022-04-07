@@ -79,6 +79,7 @@ class CoencadrantsController extends Controller
         $user->CIN = $request->input('CIN');
         $user->type = $request->input('type');
         $user->tele = $request->input('tele');
+        $user->valide = "valide";
         $user->save();
         $user1 = User::where('email', $user->email)->get(); 
         $coencadrant = new Encadrant();
@@ -88,6 +89,51 @@ class CoencadrantsController extends Controller
         return redirect('admin/coencadrants/create')->with('success', 'Co-ncadrant est ajouter');
     }
 
+    public function search(Request $request)
+    {
+        if($request->ajax())
+        {
+            $output="";
+            $coencadrants = User::where('type', 'co-encadrant')
+            ->where(function ($query) use ($request) {
+                    $query->where('name', "like", "%" . $request->search . "%");
+                    $query->orWhere('lname', "like", "%" . $request->search . "%");
+                    $query->orWhere('email', "like", "%" . $request->search . "%");
+                })->get();
+            if($coencadrants)
+            {
+                foreach ($coencadrants as $key => $coencadrant) {
+                $output.='<tr>'.
+                '<td>
+                <a href="#"><i class="fas fa-mouse"></i></a>
+                </td>
+                <td>'.$coencadrant->lname.'</td>'.
+                '<td>'.$coencadrant->name.'</td>'.
+                '<td>'.$coencadrant->email.'</td>
+                <td class="project-actions text-right">
+                <a type="submit" class="btn btn-info btn-sm"
+                    href="'.route('coencadrants.edit', $coencadrant->id).'">
+                    <i class="fas fa-pencil-alt">
+                    </i>
+                    Modifier
+                </a> <form style="display: contents;" method="post"
+                action='.route('coencadrants.destroy', $coencadrant->id).'>
+                '.csrf_field() .'
+                '. method_field("delete").'
+                <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="fas fa-trash">
+                    </i>
+                    Supprimer
+                </button>
+            </form>
+
+        </td>
+                </tr>';
+                }
+                return \Response($output);
+            }
+        }
+    }
     /**
      * Display the specified resource.
      *

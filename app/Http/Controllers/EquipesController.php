@@ -44,6 +44,7 @@ class EquipesController extends Controller
 
         return view('admin.equipes.index', compact('equipes'));
     }
+    
 
     /**
      * Show the form for creating a new resource.

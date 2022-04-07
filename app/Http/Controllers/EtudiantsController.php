@@ -78,6 +78,7 @@ class EtudiantsController extends Controller
         $user->CIN = $request->input('CIN');
         $user->type = $request->input('type');
         $user->tele = $request->input('tele');
+        $user->valide = "valide";
         $user->save();
         $user1 = User::where('email', $user->email)->get(); 
         $etudiant = new Etudiant();
@@ -86,6 +87,52 @@ class EtudiantsController extends Controller
         $etudiant->user_id = $user1[0]->id;
         $etudiant->save();
         return redirect('admin/etudiants/create')->with('success', 'Etudiant est ajouter');
+    }
+
+    public function search(Request $request)
+    {
+        if($request->ajax())
+        {
+            $output="";
+            $etudiants = User::where('type', 'etudiant')
+            ->where(function ($query) use ($request) {
+                    $query->where('name', "like", "%" . $request->search . "%");
+                    $query->orWhere('lname', "like", "%" . $request->search . "%");
+                    $query->orWhere('email', "like", "%" . $request->search . "%");
+                })->get();
+            if($etudiants)
+            {
+                foreach ($etudiants as $key => $etudiant) {
+                $output.='<tr>'.
+                '<td>
+                <a href="#"><i class="fas fa-mouse"></i></a>
+                </td>
+                <td>'.$etudiant->lname.'</td>'.
+                '<td>'.$etudiant->name.'</td>'.
+                '<td>'.$etudiant->email.'</td>
+                <td class="project-actions text-right">
+                <a type="submit" class="btn btn-info btn-sm"
+                    href="'.route('etudiants.edit', $etudiant->id).'">
+                    <i class="fas fa-pencil-alt">
+                    </i>
+                    Modifier
+                </a> <form style="display: contents;" method="post"
+                action='.route('etudiants.destroy', $etudiant->id).'>
+                '.csrf_field() .'
+                '. method_field("delete").'
+                <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="fas fa-trash">
+                    </i>
+                    Supprimer
+                </button>
+            </form>
+
+        </td>
+                </tr>';
+                }
+                return \Response($output);
+            }
+        }
     }
 
     /**

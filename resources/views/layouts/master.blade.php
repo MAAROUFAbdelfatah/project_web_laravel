@@ -8,10 +8,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta id="token" name="token" content="{ { csrf_token() } }">
   <title>Admin</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -87,7 +90,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-            @isAdmin   
+            @isAdmin 
+            <li class="nav-item menu-close">
+              <a href="#" class="nav-link active">
+                <i class="nav-icon fas fa-users-cog"></i>
+                {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
+                <p>
+                  Utilisateurs no valide
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{{route('usersnvs.index')}}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>utilisateurs</p>
+                  </a>
+                </li>
+              </ul>
+            </li> 
             <li class="nav-item menu-close">
               <a href="#" class="nav-link active">
                 <i class="nav-icon fas fa-users-cog"></i>

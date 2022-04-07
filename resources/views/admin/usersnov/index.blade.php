@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="jumbotron text-center">
-        <h1>Etudiants</h1>
+        <h1>Utilisateurs non valide</h1>
     </div>
     <div class="container">
         <div class="search">
@@ -11,7 +11,7 @@
         </div>
     </div>
         <!-- Main content -->
-        @if(count($etudiants) > 0)
+        @if(count($usersnovs) > 0)
         <div class="content">
             @include('inc.messages')
             <div class="container-fluid">
@@ -26,48 +26,61 @@
                                             <th style="width: 1%">
                                                 #
                                             </th>
-                                            <th style="width: 20%">
+                                            <th style="width: 10%">
                                                 Nom
                                             </th>
-                                            <th style="width: 30%">
+                                            <th style="width: 10%">
                                                 Prenom
                                             </th>
                                             <th>
                                                 Email
-                                            </th>
-    
-                                            <th style="width: 30%">
                                             </th>
                                         </tr>
                                     </thead>
                                     
                                     
                                     <tbody class="alldata">
-                                        @foreach($etudiants as $etudiant)
+                                        @foreach($usersnovs as $usersnov)
                                         <tr>
                                             <td>
                                                 <a href="#"><i class="fas fa-mouse"></i></a>
                                             </td>
                                             <td>
-                                                {{$etudiant->lname}}
+                                                {{$usersnov->lname}}
                                             </td>
     
                                             <td>
-                                                {{$etudiant->name}}
+                                                {{$usersnov->name}}
                                             </td>
                                             <td class="project_progress">
-                                                {{$etudiant->email}}
+                                                {{$usersnov->email}}
                                             </td>
                                             <td class="project-actions text-right">
-                                                <a type="submit" class="btn btn-info btn-sm"
-                                                    href="{{route('etudiants.edit', $etudiant->id)}}">
-                                                    <i class="fas fa-pencil-alt">
-                                                    </i>
-                                                    Modifier
-                                                </a>
-                                        
                                                 <form style="display: contents;" method="post"
-                                                    action={{route('etudiants.destroy', $etudiant->id)}}>
+                                                    action={{route('usersnvs.valide', $usersnov->id)}}>
+
+                                                    {{ csrf_field() }}
+                                                    {{ method_field('put') }}
+                                                    <td>
+                                                    <div class="form-group col-md-">
+                                                        <select name="type" id="inputState" class="form-control">
+                                                        <option selected value="admin">Admin</option>
+                                                        <option value="encadrant">Encadrant</option>
+                                                        <option value="co-encadrant">Co-encadrant</option>
+                                                        <option value="etudiant">Etudiant</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <button type="submit" class="btn btn-success btn-sm">
+                                                        <i class="fas fa-clipboard-check"></i>
+                                                        Valide
+                                                    </button>
+                                                </td>
+                                                </form>
+                                            <td>
+                                                <form style="display: contents;" method="post"
+                                                    action={{route('usersnvs.destroy', $usersnov->id)}}>
                                                     {{ csrf_field() }}
                                                     {{ method_field('delete') }}
                                                     <button type="submit" class="btn btn-danger btn-sm">
@@ -76,15 +89,16 @@
                                                         Supprimer
                                                     </button>
                                                 </form>
-    
+                                            </td>
                                             </td>
                                         </tr>
                                        
                         
-                                        @endforeach
+                                        @endforeach 
                                     </tbody>
                                     <tbody id="Content" class="searchdata">
                                     </tbody>
+                                    
                                 </table>
                             </div>
                             <!-- /.card-body -->
@@ -97,10 +111,11 @@
         </div>
         @else
             <div class="text-center">
-                <h3>Aucun etudiant exist</h3>
+                <h3>Aucun utilisateur non valide exist</h3>
             </div>
         @endif
         <!-- /.content -->
+
         <script type="text/javascript">
             $('#search').on('keyup',function(){
             $value=$(this).val();
@@ -115,7 +130,7 @@
             }
             $.ajax({
             type : 'get',
-            url : '{{route("etudiants.search")}}',
+            url : '{{route("usersnvs.search")}}',
             data:{'search':$value},
             success:function(data){
                 $('#Content').html(data);

@@ -4,7 +4,12 @@
     <div class="jumbotron text-center">
         <h1>Co-encadrants</h1>
     </div>
-    
+    <div class="container">
+        <div class="search">
+            {{ csrf_field() }}
+            <input type="search" name="search" id="search" placeholder="Chercher" class = "form-control col-md-6 mb-5"/>
+        </div>
+    </div>
         <!-- Main content -->
         @if(count($coencadrants) > 0)
         <div class="content">
@@ -36,8 +41,9 @@
                                         </tr>
                                     </thead>
                                     
-                                    @foreach($coencadrants as $coencadrant)
-                                    <tbody>
+                                    
+                                    <tbody class="alldata">
+                                        @foreach($coencadrants as $coencadrant)
                                         <tr>
                                             <td>
                                                 <a href="#"><i class="fas fa-mouse"></i></a>
@@ -75,9 +81,11 @@
                                         </tr>
                                        
                         
-    
+                                        @endforeach
                                     </tbody>
-                                    @endforeach 
+                                    
+                                    <tbody id="Content" class="searchdata">
+                                    </tbody>
                                     
                                 </table>
                             </div>
@@ -95,4 +103,30 @@
             </div>
         @endif
         <!-- /.content -->
+        <script type="text/javascript">
+            $('#search').on('keyup',function(){
+            $value=$(this).val();
+
+            if($value)
+            {
+                $('.alldata').hide();
+                $('.searchdata').show();
+            }else{
+                $('.alldata').show();
+                $('.searchdata').hide();
+            }
+            $.ajax({
+            type : 'get',
+            url : '{{route("coencadrants.search")}}',
+            data:{'search':$value},
+            success:function(data){
+                $('#Content').html(data);
+            }
+            });
+            })
+            </script>
+        <script type="text/javascript">
+            $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
+        </script>
+        
 @endsection

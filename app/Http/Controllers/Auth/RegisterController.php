@@ -74,6 +74,7 @@ class RegisterController extends Controller
             'lname'=>$data['lname'],
             'CIN'=>$data['CIN'],
             'tele'=>$data['tele'],
+            'image' => 'default.jpg',
         ]);
     }
 }

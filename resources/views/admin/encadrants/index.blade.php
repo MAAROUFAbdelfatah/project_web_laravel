@@ -4,6 +4,13 @@
     <div class="jumbotron text-center">
         <h1>Encadrants</h1>
     </div>
+
+    <div class="container">
+        <div class="search">
+            {{ csrf_field() }}
+            <input type="search" name="search" id="search" placeholder="Chercher" class = "form-control col-md-6 mb-5"/>
+        </div>
+    </div>
     
         <!-- Main content -->
         @if(count($encadrants) > 0)
@@ -36,8 +43,9 @@
                                         </tr>
                                     </thead>
                                     
-                                    @foreach($encadrants as $encadrant)
-                                    <tbody>
+                                    
+                                    <tbody class="alldata">
+                                        @foreach($encadrants as $encadrant)
                                         <tr>
                                             <td>
                                                 <a href="#"><i class="fas fa-mouse"></i></a>
@@ -75,10 +83,11 @@
                                         </tr>
                                        
                         
-    
+                                        @endforeach 
                                     </tbody>
-                                    @endforeach 
                                     
+                                    <tbody id="Content" class="searchdata">
+                                    </tbody>
                                 </table>
                             </div>
                             <!-- /.card-body -->
@@ -95,4 +104,32 @@
             </div>
         @endif
         <!-- /.content -->
+
+        {{-- javascript --}}
+        <script type="text/javascript">
+            $('#search').on('keyup',function(){
+            $value=$(this).val();
+
+            if($value)
+            {
+                $('.alldata').hide();
+                $('.searchdata').show();
+            }else{
+                $('.alldata').show();
+                $('.searchdata').hide();
+            }
+            $.ajax({
+            type : 'get',
+            url : '{{route("encadrants.search")}}',
+            data:{'search':$value},
+            success:function(data){
+                $('#Content').html(data);
+            }
+            });
+            })
+            </script>
+        <script type="text/javascript">
+            $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
+            </script>
+        
 @endsection
